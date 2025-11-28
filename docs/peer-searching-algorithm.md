@@ -73,9 +73,12 @@ The peer selection strategy uses a **two-pool approach** to balance network dive
 
 ```
 1. Calculate peers needed:
-   - peersToAdd = (currentPeerCount < lowerBound) ? (upperBound - currentPeerCount) : 0
+   - peersRequiredForPeerCount = (currentPeerCount < lowerBound) ? (upperBound - currentPeerCount) : 0
+     Note: When below lower bound, we add enough peers to reach the upper bound in one operation
    - randomlySelectedPeersToAdd = max(0, minimumRandomlySelected - currentRandomlySelected)
-   - scoreBasedPeersToAdd = max(peersToAdd - currentRandomlySelected, requiredForSubnets)
+   - peersRequiredForSubnets = targetSubnetSubscriberCount - minCurrentSubscribersForAnyRelevantSubnet
+     (Ensures we have enough peers covering all subnets we care about)
+   - scoreBasedPeersToAdd = max(peersRequiredForPeerCount - currentRandomlySelected, peersRequiredForSubnets)
 
 2. Select randomly selected peers:
    - Shuffle all candidate peers
